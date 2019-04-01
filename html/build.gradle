@@ -6,3 +6,28 @@ sourceSets.main.java.srcDirs = [ "src/" ]
 ext {
 	ARTIFACTID = 'gdx-gameanalytics-html'
 }		
+
+apply plugin: 'java'
+
+
+apply from: '../publish.gradle'
+
+configurations {
+    custom
+    compile.extendsFrom custom
+}
+
+eclipse {
+    project {
+        name = appName + "-html"
+    }
+}
+
+dependencies {
+    compile project(':core')
+}
+dependencies {
+    compile "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion"
+    compile "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
+    compile "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
+}

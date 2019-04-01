@@ -29,6 +29,24 @@ android {
 
 }
 
+
+configurations {
+    custom
+    compile.extendsFrom custom
+}
+
+eclipse {
+    project {
+        name = appName + "-android"
+    }
+}
+
+dependencies {
+    compile project(':core')
+    compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
+
+}
+
 ext {
 	ARTIFACTID = 'gdx-gameanalytics-android'
 }
