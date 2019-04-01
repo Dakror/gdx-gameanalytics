@@ -79,9 +79,9 @@ public class GameAnalytics {
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread t, Throwable e) {
+                e.printStackTrace();
                 try {
                     sendThrowableAsErrorEventSync(e);
-
                 } catch (Throwable ignore) {
                     // ignore
                 } finally {
@@ -434,7 +434,7 @@ public class GameAnalytics {
             waitTime++;
         }
 
-        submitErrorEvent(ErrorType.error, exceptionAsString);
+        submitErrorEvent(ErrorType.critical, exceptionAsString);
         flushQueueImmediately();
 
         waitTime = 0;
