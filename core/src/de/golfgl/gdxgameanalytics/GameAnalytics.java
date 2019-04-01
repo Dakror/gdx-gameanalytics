@@ -85,7 +85,7 @@ public class GameAnalytics {
                 } catch (Throwable ignore) {
                     // ignore
                 } finally {
-                    // Let Android show the default error dialog
+                    // show the default error dialog
                     defaultUncaughtExceptionHandler.uncaughtException(t, e);
                 }
             }
