@@ -9,8 +9,6 @@ import android.os.Build;
  */
 
 public class AndroidGameAnalytics extends GameAnalytics {
-    private Thread.UncaughtExceptionHandler androidUncaughtExceptionHandler;
-
     @Override
     public void startSession() {
         setPlatform(Platform.Android);
@@ -23,40 +21,5 @@ public class AndroidGameAnalytics extends GameAnalytics {
         setManufacturer(Build.MANUFACTURER);
 
         super.startSession();
-    }
-
-    /**
-     * Registers a handler for catching all uncaught exceptions to send them to GA.
-     */
-    public void registerUncaughtExceptionHandler() {
-
-        // don't register twice
-        if (androidUncaughtExceptionHandler != null)
-            return;
-
-        androidUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
-
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread t, Throwable e) {
-                try {
-                    sendThrowableAsErrorEventSync(e);
-
-                } catch (Throwable ignore) {
-                    // ignore
-                } finally {
-                    // Let Android show the default error dialog
-                    androidUncaughtExceptionHandler.uncaughtException(t, e);
-                }
-            }
-        });
-    }
-
-    public void unregisterUncaughtExceptionHandler() {
-        if (androidUncaughtExceptionHandler == null)
-            return;
-
-        Thread.setDefaultUncaughtExceptionHandler(androidUncaughtExceptionHandler);
-        androidUncaughtExceptionHandler = null;
     }
 }

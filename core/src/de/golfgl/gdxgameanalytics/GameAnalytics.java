@@ -1,5 +1,8 @@
 package de.golfgl.gdxgameanalytics;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Preferences;
@@ -10,9 +13,6 @@ import com.badlogic.gdx.utils.JsonWriter;
 import com.badlogic.gdx.utils.Queue;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.Timer;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Gameanalytics.com client for libGDX
@@ -63,6 +63,42 @@ public class GameAnalytics {
     private long timeStampDiscrepancy;
     private long sessionStartTimestamp;
     private Preferences prefs;
+    private Thread.UncaughtExceptionHandler defaultUncaughtExceptionHandler;
+
+    /**
+     * Registers a handler for catching all uncaught exceptions to send them to GA.
+     */
+    public void registerUncaughtExceptionHandler() {
+
+        // don't register twice
+        if (defaultUncaughtExceptionHandler != null)
+            return;
+
+        defaultUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                try {
+                    sendThrowableAsErrorEventSync(e);
+
+                } catch (Throwable ignore) {
+                    // ignore
+                } finally {
+                    // Let Android show the default error dialog
+                    defaultUncaughtExceptionHandler.uncaughtException(t, e);
+                }
+            }
+        });
+    }
+
+    public void unregisterUncaughtExceptionHandler() {
+        if (defaultUncaughtExceptionHandler == null)
+            return;
+
+        Thread.setDefaultUncaughtExceptionHandler(defaultUncaughtExceptionHandler);
+        defaultUncaughtExceptionHandler = null;
+    }
 
     /**
      * initializes and starts the session. Make sure you have set all neccessary parameters before calling this
@@ -287,12 +323,12 @@ public class GameAnalytics {
     }
 
     public void submitProgressionEvent(ProgressionStatus status, String progression01, String progression02,
-                                       String progression03) {
+            String progression03) {
         submitProgressionEvent(status, progression01, progression02, progression03, 0, 0);
     }
 
     public void submitProgressionEvent(ProgressionStatus status, String progression01, String progression02,
-                                       String progression03, int score, int attemptNum) {
+            String progression03, int score, int attemptNum) {
         if (!isInitialized())
             return;
 
@@ -332,7 +368,7 @@ public class GameAnalytics {
     }
 
     private void createResourceEvent(ResourceFlowType flowType, String virtualCurrency, String itemType,
-                                     String itemId, float amount) {
+            String itemId, float amount) {
         if (!isInitialized())
             return;
 
@@ -380,7 +416,6 @@ public class GameAnalytics {
         }
     }
 
-
     /**
      * submits a throwable immediatly and blocks the thread until it is sent
      * (with a max wait time of three seconds)
@@ -389,7 +424,7 @@ public class GameAnalytics {
      * @return Stacktrace as a string
      * @throws InterruptedException
      */
-    protected String sendThrowableAsErrorEventSync(Throwable e) throws InterruptedException {
+    public String sendThrowableAsErrorEventSync(Throwable e) throws InterruptedException {
         String exceptionAsString = GwtIncompatibleStuff.getThrowableStacktraceAsString(e);
 
         int waitTime = 0;
@@ -640,11 +675,17 @@ public class GameAnalytics {
         this.custom3 = custom3;
     }
 
-    public enum ProgressionStatus {Start, Fail, Complete}
+    public enum ProgressionStatus {
+        Start, Fail, Complete
+    }
 
-    public enum ResourceFlowType {Sink, Source}
+    public enum ResourceFlowType {
+        Sink, Source
+    }
 
-    public enum ErrorType {debug, info, warning, error, critical}
+    public enum ErrorType {
+        debug, info, warning, error, critical
+    }
 
     /**
      * Gameanalytics does not allow free definition of platforms. I did not find a documented list of supported
@@ -675,7 +716,7 @@ public class GameAnalytics {
 
         public AnnotatedEvent() {
             //this is stored
-            keyValues.put("client_ts", (Long) getCurrentServerTime() / 1000L);
+            keyValues.put("client_ts", getCurrentServerTime() / 1000L);
             this.sessionId = session_id;
             this.sessionNum = session_num;
         }
