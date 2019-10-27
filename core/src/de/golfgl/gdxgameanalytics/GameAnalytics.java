@@ -1,18 +1,11 @@
 package de.golfgl.gdxgameanalytics;
 
+import java.lang.StringBuilder;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net;
-import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.JsonWriter;
-import com.badlogic.gdx.utils.Queue;
-import com.badlogic.gdx.utils.TimeUtils;
-import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.*;
+import com.badlogic.gdx.utils.*;
 
 /**
  * Gameanalytics.com client for libGDX
@@ -673,6 +666,10 @@ public class GameAnalytics {
      */
     public void setCustom3(String custom3) {
         this.custom3 = custom3;
+    }
+
+    public String getUserId() {
+        return user_id;
     }
 
     public enum ProgressionStatus {
