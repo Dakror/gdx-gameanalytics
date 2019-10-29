@@ -14,7 +14,7 @@ buildscript {
     dependencies {
         classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.6'
         classpath 'com.android.tools.build:gradle:2.3.0'
-        classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.5'
+        classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.7'
         classpath 'org.multi-os-engine:moe-gradle:1.2.3'
     }
 }
@@ -31,7 +31,7 @@ allprojects {
 
         appName = 'gdx-gameanalytics'
         gdxVersion = '1.9.5'
-        roboVMVersion = '2.3.5'
+        roboVMVersion = '2.3.7'
     }
 
     repositories {

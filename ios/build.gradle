@@ -1,11 +1,13 @@
+
+
+apply plugin: 'java'
+apply plugin: 'robovm'
+
 sourceSets.main.java.srcDirs = [ "src/" ]
 
 ext {
     ARTIFACTID = 'gdx-gameanalytics-ios'
 }
-
-apply plugin: 'java'
-apply plugin: 'robovm'
 
 apply from: '../publish.gradle'
 
